@@ -45,14 +45,22 @@
     </global>
     <crontab>
         <jobs>
-            <imagequeue_images>
+            <imagequeue_images_jpg>
                 <schedule>
                     <cron_expr>*/5 * * * *</cron_expr>
                 </schedule>
                 <run>
-                    <model>imagequeue/cron::run</model>
+                    <model>imagequeue/cron::runJpg</model>
                 </run>
-            </imagequeue_images>
+            </imagequeue_images_jpg>
+            <imagequeue_images_png>
+                <schedule>
+                    <cron_expr>*/5 * * * *</cron_expr>
+                </schedule>
+                <run>
+                    <model>imagequeue/cron::runPng</model>
+                </run>
+            </imagequeue_images_png>
         </jobs>
     </crontab>
 

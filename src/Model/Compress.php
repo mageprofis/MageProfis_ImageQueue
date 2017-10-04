@@ -22,8 +22,6 @@ extends Mage_Core_Model_Abstract
 
     public function getFilename()
     {
-        //var_dump(Mage::getBaseDir().DS.$this->getData('filename'));
-        //exit;
         return Mage::getBaseDir().DS.$this->getData('filename');
     }
     
@@ -48,11 +46,12 @@ extends Mage_Core_Model_Abstract
     /**
      * @return MageProfis_ImageQueue_Model_Compress
      */
-    public function getFirstItem()
+    public function getFirstItem($suffix = 'jpg')
     {
         return $this->getCollection()
                 ->addOrder('priority', 'DESC')
                 ->addOrder('compress_id', 'ASC')
+                ->addFieldToFilter('suffix', $suffix)
                 ->setPageSize(1)
                 ->setCurPage(1)
                 ->getFirstItem();

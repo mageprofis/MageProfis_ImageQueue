@@ -12,31 +12,59 @@ extends Mage_Core_Helper_Abstract
     {
         if (!Mage::getStoreConfigFlag('imagequeue/general/active', 0))
         {
-            return;
+            return false;
         }
-        $item = Mage::getModel('imagequeue/compress')->getCollection()
-                ->addFieldToFilter('filename', $path)
-                ->setPageSize(1)
-                ->setCurPage(1)
-                ->getFirstItem();
-        /* @var $item MageProfis_ImageQueue_Model_Resource_Compress_Collection */
-        $compress = Mage::getModel('imagequeue/compress');
-        /* @var $compress MageProfis_ImageQueue_Model_Compress */
-        if ($item && $item->getId())
+        if ($suffix = $this->allowedFile($path))
         {
-            $compress->load($item->getId());
-            if (intval($prior) > $compress->getPriority())
+            $item = Mage::getModel('imagequeue/compress')->getCollection()
+                    ->addFieldToFilter('filename', $path)
+                    ->setPageSize(1)
+                    ->setCurPage(1)
+                    ->getFirstItem();
+            /* @var $item MageProfis_ImageQueue_Model_Resource_Compress_Collection */
+            $compress = Mage::getModel('imagequeue/compress');
+            /* @var $compress MageProfis_ImageQueue_Model_Compress */
+            if ($item && $item->getId())
             {
-                $prior = (int) $prior;
-            } else {
-                $prior = (int) $compress->getPriority();
+                $compress->load($item->getId());
+                if (intval($prior) > $compress->getPriority())
+                {
+                    $prior = (int) $prior;
+                } else {
+                    $prior = (int) $compress->getPriority();
+                }
             }
+            $compress->setFilename($path)
+                    ->setPriority($prior)
+                    ->setSuffix($suffix)
+                    ->save();
+            return true;
         }
-        return $compress->setFilename($path)
-                ->setPriority($prior)
-                ->save();
+        return false;
     }
-    
+
+    /**
+     * 
+     * @param string $filename
+     * @return string|null
+     */
+    public function allowedFile($filename)
+    {
+        $extension = mb_strtolower(pathinfo($filename, PATHINFO_EXTENSION), 'UTF-8');
+        $newextension = null;
+        switch($extension)
+        {
+            case 'jpg':
+            case 'jpeg':
+                $newextension = 'jpg';
+                break;
+            case 'png':
+                $newextension = 'png';
+                break;
+        }
+        return $newextension;
+    }
+
     /**
      * 
      * @param string $msg

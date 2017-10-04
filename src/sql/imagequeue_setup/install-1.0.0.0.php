@@ -22,6 +22,11 @@ $table = $installer->getConnection()
         'length' => 1,
         'default' => 0
         ), 'Title')
+    ->addColumn('suffix', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
+        'nullable'  => false,
+        'length' => 8,
+        'default' => ''
+        ), 'Title')
     ->setComment('ImageQueue Compress Database');
 $installer->getConnection()->createTable($table);
 
