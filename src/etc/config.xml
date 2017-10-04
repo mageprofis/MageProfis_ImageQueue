@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <MageProfis_ImageQueue>
+            <version>1.0.0.0</version>
+        </MageProfis_ImageQueue>
+    </modules>
+    <global>
+
+        <models>
+            <imagequeue>
+                <class>MageProfis_ImageQueue_Model</class>
+                <resourceModel>imagequeue_resource</resourceModel>
+            </imagequeue>
+            <imagequeue_resource>
+                <class>MageProfis_ImageQueue_Model_Resource</class>
+                <entities>
+                    <compress>
+                        <table>imagequeue_compress</table>
+                    </compress>
+                </entities>
+            </imagequeue_resource>
+            <catalog>
+                <rewrite>
+                    <product_image>MageProfis_ImageQueue_Model_Catalog_Product_Image</product_image>
+                </rewrite>
+            </catalog>
+        </models>
+
+        <helpers>
+            <imagequeue>
+                <class>MageProfis_ImageQueue_Helper</class>
+            </imagequeue>
+        </helpers>
+
+        <resources>
+            <imagequeue_setup>
+                <setup>
+                    <module>MageProfis_ImageQueue</module>
+                    <class>Mage_Catalog_Model_Resource_Eav_Mysql4_Setup</class>
+                </setup>
+            </imagequeue_setup>
+        </resources>
+
+    </global>
+    <crontab>
+        <jobs>
+            <imagequeue_images>
+                <schedule>
+                    <cron_expr>*/5 * * * *</cron_expr>
+                </schedule>
+                <run>
+                    <model>imagequeue/cron::run</model>
+                </run>
+            </imagequeue_images>
+        </jobs>
+    </crontab>
+
+    <adminhtml>
+        <acl>
+            <resources>
+                <admin>
+                    <children>
+                        <system>
+                            <children>
+                                <config>
+                                    <children>
+                                        <imagequeue>
+                                            <title>Image Queue</title>
+                                        </imagequeue>
+                                    </children>
+                                </config>
+                            </children>
+                        </system>
+                    </children>
+                </admin>
+            </resources>
+        </acl>
+    </adminhtml>
+</config>

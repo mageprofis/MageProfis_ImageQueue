@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <MageProfis_ImageQueue>
+            <active>true</active>
+            <codePool>community</codePool>
+        </MageProfis_ImageQueue>
+    </modules>
+</config>
