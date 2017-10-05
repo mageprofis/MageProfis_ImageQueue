@@ -27,7 +27,6 @@ extends Mage_Core_Model_Abstract
         $i = 0;
         while(true)
         {
-            var_dump(1111);
             $item = Mage::getModel('imagequeue/compress')->getFirstItem('jpg');
             /* @var $item MageProfis_ImageQueue_Model_Compress */
             // skip at range or if there is no item in queue
