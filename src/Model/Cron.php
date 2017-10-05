@@ -27,6 +27,7 @@ extends Mage_Core_Model_Abstract
         $i = 0;
         while(true)
         {
+            var_dump(1111);
             $item = Mage::getModel('imagequeue/compress')->getFirstItem('jpg');
             /* @var $item MageProfis_ImageQueue_Model_Compress */
             // skip at range or if there is no item in queue
@@ -80,7 +81,7 @@ extends Mage_Core_Model_Abstract
             {
                 ob_end_clean();
             }
-            $item->delete();
+            Mage::getModel('imagequeue/compress')->load($item->getId())->delete();
         }
     }
 
@@ -143,7 +144,7 @@ extends Mage_Core_Model_Abstract
             {
                 ob_end_clean();
             }
-            $item->delete();
+            Mage::getModel('imagequeue/compress')->load($item->getId())->delete();
         }
     }
 
@@ -154,12 +155,14 @@ extends Mage_Core_Model_Abstract
      */
     protected function shell_exec($cmd)
     {
+        $this->disconnectDatabases();
         $result = shell_exec($cmd);
         if (Mage::getStoreConfigFlag('imagequeue/general/debug', 0))
         {
             echo date('r').' - '.trim($cmd)."\n";
             echo date('r').' - '.trim($result)."\n";
         }
+        $this->disconnectDatabases();
         return $result;
     }
 
@@ -177,5 +180,40 @@ extends Mage_Core_Model_Abstract
             $this->_command_exists[$cmd] = $result;
         }
         return $this->_command_exists[$cmd];
+    }
+
+    /**
+     * to avoid errors with missing
+     * 
+     * @return void
+     */
+    public function disconnectDatabases()
+    {
+        $resource = Mage::getSingleton('core/resource');
+        /* @var $resource Mage_Core_Model_Resource */
+
+        // write connection
+        $conn = $resource->getConnection('core_write');
+        /* @var $conn Magento_Db_Adapter_Pdo_Mysql */
+        try {
+            $conn->fetchOne('SELECT 42 as answer');
+        } catch (Exception $ex) {
+            if (stristr($ex->getMessage(), 'MySQL server has gone away'))
+            {
+                $conn->closeConnection();
+            }
+        }
+
+        // read connection
+        $conn = $resource->getConnection('core_read');
+        /* @var $conn Magento_Db_Adapter_Pdo_Mysql */
+        try {
+            $conn->fetchOne('SELECT 42 as answer');
+        } catch (Exception $ex) {
+            if (stristr($ex->getMessage(), 'MySQL server has gone away'))
+            {
+                $conn->closeConnection();
+            }
+        }
     }
 }
