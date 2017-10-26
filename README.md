@@ -35,7 +35,6 @@ Any contribution to the development is highly welcome. The best possibility to p
 
 Developer
 ---------
-* Ulrich Abelmann
 * Mathis Klooss
 
 Licence
