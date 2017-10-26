@@ -2,11 +2,11 @@
 
 if ((string)Mage::getConfig()->getModuleConfig('Netzarbeiter_NicerImageNames')->active == 'true')
 {
-    class Mage_Catalog_Model_Product_Image_Abstract
+    class MageProfis_ImageQueue_Model_Catalog_Product_Image_Abstract
     extends Netzarbeiter_NicerImageNames_Model_Image
     { }
 } else {
-    class Mage_Catalog_Model_Product_Image_Abstract
+    class MageProfis_ImageQueue_Model_Catalog_Product_Image_Abstract
     extends Mage_Catalog_Model_Product_Image
     { }
 }
