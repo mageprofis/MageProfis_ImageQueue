@@ -1,7 +1,7 @@
 <?php
 
 class MageProfis_ImageQueue_Model_Catalog_Product_Image
-extends Mage_Catalog_Model_Product_Image_Abstract
+extends MageProfis_ImageQueue_Model_Catalog_Product_Image_Abstract
 {
     /**
      * @return MageProfis_ImageQueue_Model_Catalog_Product_Image
