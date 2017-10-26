@@ -1,14 +1,16 @@
 <?xml version="1.0"?>
+<!--
+Sample file, when your using also NicerImageNames you have to
+set the correct order of files.
+
+"Depends" Modul will always load BEFORE our Modul ;-)
+//-->
 <config>
     <modules>
         <MageProfis_ImageQueue>
-            <active>true</active>
-            <codePool>community</codePool>
-            <!--
             <depends>
                 <Netzarbeiter_NicerImageNames />
             </depends>
-            //-->
         </MageProfis_ImageQueue>
     </modules>
 </config>
