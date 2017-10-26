@@ -31,6 +31,11 @@
             <imagequeue>
                 <class>MageProfis_ImageQueue_Helper</class>
             </imagequeue>
+            <timage>
+                <rewrite>
+                    <data>MageProfis_ImageQueue_Helper_Timage_Data</data>
+                </rewrite>
+            </timage>
         </helpers>
 
         <resources>
@@ -43,6 +48,7 @@
         </resources>
 
     </global>
+
     <crontab>
         <jobs>
             <imagequeue_images_jpg>
