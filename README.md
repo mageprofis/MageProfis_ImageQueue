@@ -44,4 +44,4 @@ Licence
 
 Copyright
 ---------
-(c) 2015 Mage-Profis GmbH
+(c) 2017 Loewenstark Digital Solutions GmbH
