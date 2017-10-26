@@ -5,7 +5,7 @@ Info
 -----------
 ImageQueue to Compress Images in your Store (like Product Images).
 
-The Compression will be done with a CronTab, JPEG and PNG will be processed in extra Cronjobs
+The Compression will be done with a CronTab, JPEG and PNG will be processed in separated Cronjobs
 
 You can also set the priotity of some Images.
 
