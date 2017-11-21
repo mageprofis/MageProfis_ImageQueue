@@ -5,6 +5,11 @@ $installer = $this;
 
 $installer->startSetup();
 
+if ($installer->getConnection()->isTableExists($installer->getTable('imagequeue/compress')))
+{
+    $installer->getConnection()->dropTable($installer->getTable('imagequeue/compress'));
+}
+
 $table = $installer->getConnection()
     ->newTable($installer->getTable('imagequeue/compress'))
     ->addColumn('compress_id', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
