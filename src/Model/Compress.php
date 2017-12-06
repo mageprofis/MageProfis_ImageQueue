@@ -40,6 +40,10 @@ extends Mage_Core_Model_Abstract
             $new = ltrim(ltrim(substr($this->getData('filename'), strlen($baseDir)), DS), '/');
             $this->setFilename($new);
         }
+        if (!strlen($this->getData('filename_hash')) > 1 || !$this->hasData('filename_hash'))
+        {
+            $this->setData('filename_hash', hash('sha256', $this->getData('filename')));
+        }
         return $this;
     }
 

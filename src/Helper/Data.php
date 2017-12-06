@@ -16,28 +16,16 @@ extends Mage_Core_Helper_Abstract
         }
         if ($suffix = $this->allowedFile($path))
         {
-            $item = Mage::getModel('imagequeue/compress')->getCollection()
-                    ->addFieldToFilter('filename', $path)
-                    ->setPageSize(1)
-                    ->setCurPage(1)
-                    ->getFirstItem();
-            /* @var $item MageProfis_ImageQueue_Model_Resource_Compress_Collection */
-            $compress = Mage::getModel('imagequeue/compress');
-            /* @var $compress MageProfis_ImageQueue_Model_Compress */
-            if ($item && $item->getId())
-            {
-                $compress->load($item->getId());
-                if (intval($prior) > $compress->getPriority())
-                {
-                    $prior = (int) $prior;
-                } else {
-                    $prior = (int) $compress->getPriority();
-                }
+            try {
+                $compress = Mage::getModel('imagequeue/compress');
+                /* @var $compress MageProfis_ImageQueue_Model_Compress */
+                $compress->setFilename($path)
+                        ->setPriority($prior)
+                        ->setSuffix($suffix)
+                        ->save();
+            } catch(Exception $e) {
+                Mage::logException($e);
             }
-            $compress->setFilename($path)
-                    ->setPriority($prior)
-                    ->setSuffix($suffix)
-                    ->save();
             return true;
         }
         return false;
