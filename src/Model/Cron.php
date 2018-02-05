@@ -49,6 +49,13 @@ extends Mage_Core_Model_Abstract
             // jpegoptim
             $jpegoptimRunTwice = false;
             $jpegoptimExists = false;
+            
+            if (Mage::getStoreConfigFlag('imagequeue/programm/webp', 0) && $this->command_exist('optipng'))
+            {
+                $webpFilename = dirname($item->getFilename()).DS. pathinfo($item->getFilename(), PATHINFO_FILENAME).'.webp';
+                $this->shell_exec('cwebp -q 90 "'.$item->getFilename().'" -o "'.$webpFilename.'" 2>&1');
+            }
+
             if (Mage::getStoreConfigFlag('imagequeue/programm/jpegoptim', 0) && $this->command_exist('jpegoptim'))
             {
                 $jpegoptimExists = true;
@@ -125,6 +132,12 @@ extends Mage_Core_Model_Abstract
             if (!Mage::getStoreConfigFlag('imagequeue/general/debug', 0))
             {
                 ob_start();
+            }
+
+            if (Mage::getStoreConfigFlag('imagequeue/programm/webp', 0) && $this->command_exist('optipng'))
+            {
+                $webpFilename = dirname($item->getFilename()).DS. pathinfo($item->getFilename(), PATHINFO_FILENAME).'.webp';
+                $this->shell_exec('cwebp -q 90 "'.$item->getFilename().'" -o "'.$webpFilename.'" 2>&1');
             }
 
             Mage::helper('imagequeue')->log('PNG start compress: '.$item->getFilename());

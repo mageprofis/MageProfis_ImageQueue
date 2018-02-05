@@ -7,7 +7,12 @@ ImageQueue to Compress Images in your Store (like Product Images).
 
 The Compression will be done with a CronTab, JPEG and PNG will be processed in separated Cronjobs
 
+You can choose which compressors you like to use.
+
 You can also set the priotity of some Images.
+
+Added Support for webp, be careful when you are enable this option,
+so you should add MageProfis_ImageQueue_Helper_Data::canUseWebp() to your block cache key
 
 
 Requirements
@@ -18,6 +23,7 @@ Requirements
 - [guetzli](https://github.com/google/guetzli)
 - [optipng](http://optipng.sourceforge.net/)
 - [pngquant](https://github.com/pornel/pngquant)
+- [webp](https://developers.google.com/speed/webp/)
 
 Compatibility
 -------------
