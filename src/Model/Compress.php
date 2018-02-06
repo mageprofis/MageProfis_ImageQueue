@@ -20,11 +20,15 @@ extends Mage_Core_Model_Abstract
         $this->_init('imagequeue/compress');
     }
 
+    /**
+     * 
+     * @return string
+     */
     public function getFilename()
     {
         return Mage::getBaseDir().DS.$this->getData('filename');
     }
-    
+
     /**
      * Processing object before save data
      *

@@ -54,33 +54,33 @@ extends Mage_Core_Model_Abstract
             if (Mage::getStoreConfigFlag('imagequeue/programm/webp', 0) && $this->command_exist('cwebp'))
             {
                 $webpFilename = dirname($item->getFilename()).DS. pathinfo($item->getFilename(), PATHINFO_FILENAME).'.webp';
-                $this->shell_exec('cwebp -q 90 "'.$item->getFilename().'" -o "'.$webpFilename.'" 2>&1');
+                $this->shell_exec('cwebp -q 90 '.$this->escapeshellarg($item->getFilename()).' -o "'.$this->escapeshellarg($webpFilename).'" 2>&1');
             }
 
             if (Mage::getStoreConfigFlag('imagequeue/programm/jpegoptim', 0) && $this->command_exist('jpegoptim'))
             {
                 $jpegoptimExists = true;
-                $this->shell_exec('jpegoptim -o --strip-all --max=90 --all-progressive "'.$item->getFilename().'" 2>&1');
+                $this->shell_exec('jpegoptim -o --strip-all --max=90 --all-progressive '.$this->escapeshellarg($item->getFilename()).' 2>&1');
             }
 
             // jpegtran, or mozjpeg
             if (Mage::getStoreConfigFlag('imagequeue/programm/jpegtran', 0) && $this->command_exist('jpegtran'))
             {
                 $jpegoptimRunTwice = true;
-                $this->shell_exec('jpegtran -copy none -optimize -progressive -outfile "'.$item->getFilename().'" "'.$item->getFilename().'" 2>&1');
+                $this->shell_exec('jpegtran -copy none -optimize -progressive -outfile '.$this->escapeshellarg($item->getFilename()).' '.$this->escapeshellarg($item->getFilename()).' 2>&1');
             }
 
             // guetzli
             if (Mage::getStoreConfigFlag('imagequeue/programm/guetzli', 0) && $this->command_exist('guetzli'))
             {
                 $jpegoptimRunTwice = true;
-                $this->shell_exec('guetzli --quality 90 "'.$item->getFilename().'" "'.$item->getFilename().'" 2>&1');
+                $this->shell_exec('guetzli --quality 90 '.$this->escapeshellarg($item->getFilename()).' '.$this->escapeshellarg($item->getFilename()).' 2>&1');
             }
 
             // jpegoptim, twice, yep twice
             if ($jpegoptimRunTwice && $jpegoptimExists)
             {
-                $this->shell_exec('jpegoptim -o --strip-all --max=90 --all-progressive "'.$item->getFilename().'"');
+                $this->shell_exec('jpegoptim -o --strip-all --max=90 --all-progressive '.$this->escapeshellarg($item->getFilename()).'');
             }
             if ($webpFilename)
             {
@@ -148,18 +148,18 @@ extends Mage_Core_Model_Abstract
             if (Mage::getStoreConfigFlag('imagequeue/programm/webp', 0) && $this->command_exist('optipng'))
             {
                 $webpFilename = dirname($item->getFilename()).DS. pathinfo($item->getFilename(), PATHINFO_FILENAME).'.webp';
-                $this->shell_exec('cwebp -q 90 "'.$item->getFilename().'" -o "'.$webpFilename.'" 2>&1');
+                $this->shell_exec('cwebp -q 90 '.$this->escapeshellarg($item->getFilename()).' -o "'.$this->escapeshellarg($webpFilename).'" 2>&1');
             }
 
             Mage::helper('imagequeue')->log('PNG start compress: '.$item->getFilename());
             if (Mage::getStoreConfigFlag('imagequeue/programm/optipng', 0) && $this->command_exist('optipng'))
             {
-                $this->shell_exec('optipng -o9 -strip all "'.$item->getFilename().'" 2>&1');
+                $this->shell_exec('optipng -o9 -strip all '.$this->escapeshellarg($item->getFilename()).' 2>&1');
             }
 
             if (Mage::getStoreConfigFlag('imagequeue/programm/pngquant', 0) && $this->command_exist('pngquant'))
             {
-                $this->shell_exec('pngquant --skip-if-larger --ext .png --force 256 "'.$item->getFilename().'" 2>&1');
+                $this->shell_exec('pngquant --skip-if-larger --ext .png --force 256 '.$this->escapeshellarg($item->getFilename()).' 2>&1');
             }
             Mage::helper('imagequeue')->log('PNG end compress: '.$item->getFilename());
 
@@ -199,6 +199,16 @@ extends Mage_Core_Model_Abstract
         return $result;
     }
 
+    /**
+     * 
+     * @param string $cmd
+     * @return string
+     */
+    public function escapeshellarg($cmd)
+    {
+        return escapeshellarg($cmd);
+    }
+    
     /**
      * 
      * @param string $cmd
