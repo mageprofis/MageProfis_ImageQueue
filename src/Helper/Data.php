@@ -3,6 +3,10 @@
 class MageProfis_ImageQueue_Helper_Data
 extends Mage_Core_Helper_Abstract
 {
+    
+    protected $_skipWebp = false;
+
+
     /**
      * 
      * @param string $path
@@ -72,6 +76,10 @@ extends Mage_Core_Helper_Abstract
      */
     public function canUseWebp()
     {
+        if ($this->_skipWebp)
+        {
+            return false;
+        }
         if (Mage::getStoreConfigFlag('imagequeue/programm/webp', 0))
         {
             $ua = Mage::helper('core/http')->getHttpUserAgent();
@@ -88,5 +96,16 @@ extends Mage_Core_Helper_Abstract
             }
         }
         return false;
+    }
+
+    /**
+     * 
+     * @param bool|int $bool
+     * @return $this
+     */
+    public function setSkipcanUseWebp($bool)
+    {
+        $this->_skipWebp = (bool) intval($bool);
+        return $this;
     }
 }
