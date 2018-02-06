@@ -72,17 +72,20 @@ extends Mage_Core_Helper_Abstract
      */
     public function canUseWebp()
     {
-        $ua = Mage::helper('core/http')->getHttpUserAgent();
-        if (strstr($ua, 'Chrome/')
-         && strstr($ua, 'AppleWebKit/')
-         && strstr($ua, 'Safari'))
+        if (Mage::getStoreConfigFlag('imagequeue/programm/webp', 0))
         {
-            return true;
-        }
-        // okay pagespeed will be also webp able :)
-        if (strstr($ua, 'Google Page Speed Insights'))
-        {
-            return true;
+            $ua = Mage::helper('core/http')->getHttpUserAgent();
+            if (strstr($ua, 'Chrome/')
+             && strstr($ua, 'AppleWebKit/')
+             && strstr($ua, 'Safari'))
+            {
+                return true;
+            }
+            // okay pagespeed will be also webp able :)
+            if (strstr($ua, 'Google Page Speed Insights'))
+            {
+                return true;
+            }
         }
         return false;
     }
