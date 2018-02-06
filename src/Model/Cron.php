@@ -50,7 +50,8 @@ extends Mage_Core_Model_Abstract
             $jpegoptimRunTwice = false;
             $jpegoptimExists = false;
             
-            if (Mage::getStoreConfigFlag('imagequeue/programm/webp', 0) && $this->command_exist('optipng'))
+            $webpFilename = null;
+            if (Mage::getStoreConfigFlag('imagequeue/programm/webp', 0) && $this->command_exist('cwebp'))
             {
                 $webpFilename = dirname($item->getFilename()).DS. pathinfo($item->getFilename(), PATHINFO_FILENAME).'.webp';
                 $this->shell_exec('cwebp -q 90 "'.$item->getFilename().'" -o "'.$webpFilename.'" 2>&1');
@@ -80,6 +81,15 @@ extends Mage_Core_Model_Abstract
             if ($jpegoptimRunTwice && $jpegoptimExists)
             {
                 $this->shell_exec('jpegoptim -o --strip-all --max=90 --all-progressive "'.$item->getFilename().'"');
+            }
+            if ($webpFilename)
+            {
+                $webpFilenameSize = filesize($webpFilename);
+                $filenameSize = filesize($item->getFilename());
+                if ($webpFilenameSize >= $filenameSize)
+                {
+                    @unlink($webpFilename);
+                }
             }
             Mage::helper('imagequeue')->log('JPEG end compress: '.$item->getFilename());
 
@@ -134,6 +144,7 @@ extends Mage_Core_Model_Abstract
                 ob_start();
             }
 
+            $webpFilename = null;
             if (Mage::getStoreConfigFlag('imagequeue/programm/webp', 0) && $this->command_exist('optipng'))
             {
                 $webpFilename = dirname($item->getFilename()).DS. pathinfo($item->getFilename(), PATHINFO_FILENAME).'.webp';
@@ -148,10 +159,20 @@ extends Mage_Core_Model_Abstract
 
             if (Mage::getStoreConfigFlag('imagequeue/programm/pngquant', 0) && $this->command_exist('pngquant'))
             {
-                $this->shell_exec('pngquant --ext .png --force 256 "'.$item->getFilename().'" 2>&1');
+                $this->shell_exec('pngquant --skip-if-larger --ext .png --force 256 "'.$item->getFilename().'" 2>&1');
             }
             Mage::helper('imagequeue')->log('PNG end compress: '.$item->getFilename());
 
+            if ($webpFilename)
+            {
+                $webpFilenameSize = filesize($webpFilename);
+                $filenameSize = filesize($item->getFilename());
+                if ($webpFilenameSize >= $filenameSize)
+                {
+                    @unlink($webpFilename);
+                }
+            }
+            
             if (!Mage::getStoreConfigFlag('imagequeue/general/debug', 0))
             {
                 ob_end_clean();
