@@ -54,7 +54,7 @@ extends Mage_Core_Model_Abstract
             if (Mage::getStoreConfigFlag('imagequeue/programm/webp', 0) && $this->command_exist('cwebp'))
             {
                 $webpFilename = dirname($item->getFilename()).DS. pathinfo($item->getFilename(), PATHINFO_FILENAME).'.webp';
-                $this->shell_exec('cwebp -q 90 '.$this->escapeshellarg($item->getFilename()).' -o "'.$this->escapeshellarg($webpFilename).'" 2>&1');
+                $this->shell_exec('cwebp -q 90 '.$this->escapeshellarg($item->getFilename()).' -o '.$this->escapeshellarg($webpFilename).' 2>&1');
             }
 
             if (Mage::getStoreConfigFlag('imagequeue/programm/jpegoptim', 0) && $this->command_exist('jpegoptim'))
@@ -148,7 +148,7 @@ extends Mage_Core_Model_Abstract
             if (Mage::getStoreConfigFlag('imagequeue/programm/webp', 0) && $this->command_exist('optipng'))
             {
                 $webpFilename = dirname($item->getFilename()).DS. pathinfo($item->getFilename(), PATHINFO_FILENAME).'.webp';
-                $this->shell_exec('cwebp -q 90 '.$this->escapeshellarg($item->getFilename()).' -o "'.$this->escapeshellarg($webpFilename).'" 2>&1');
+                $this->shell_exec('cwebp -q 90 '.$this->escapeshellarg($item->getFilename()).' -o '.$this->escapeshellarg($webpFilename).' 2>&1');
             }
 
             Mage::helper('imagequeue')->log('PNG start compress: '.$item->getFilename());
