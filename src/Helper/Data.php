@@ -82,7 +82,8 @@ extends Mage_Core_Helper_Abstract
         }
         if (Mage::getStoreConfigFlag('imagequeue/programm/webp', 0))
         {
-            if (isset($_SERVER['HTTP_ACCEPT']) && strstr($_SERVER['HTTP_ACCEPT'], 'image/webp'))
+            if (isset($_SERVER['HTTP_ACCEPT'])
+                    && strstr(mb_strtolower($_SERVER['HTTP_ACCEPT'], 'UTF-8'), 'image/webp'))
             {
                 return true;
             }
