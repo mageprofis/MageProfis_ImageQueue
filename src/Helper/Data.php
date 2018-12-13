@@ -82,13 +82,11 @@ extends Mage_Core_Helper_Abstract
         }
         if (Mage::getStoreConfigFlag('imagequeue/programm/webp', 0))
         {
-            $ua = Mage::helper('core/http')->getHttpUserAgent();
-            if (strstr($ua, 'Chrome/')
-             && strstr($ua, 'AppleWebKit/')
-             && strstr($ua, 'Safari'))
+            if (isset($_SERVER['HTTP_ACCEPT']) && strstr($_SERVER['HTTP_ACCEPT'], 'image/webp'))
             {
                 return true;
             }
+            $ua = Mage::helper('core/http')->getHttpUserAgent();
             // okay pagespeed will be also webp able :)
             if (strstr($ua, 'Google Page Speed Insights'))
             {
