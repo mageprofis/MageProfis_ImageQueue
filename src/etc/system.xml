@@ -21,8 +21,8 @@
                     <frontend_type>text</frontend_type>
                     <sort_order>5</sort_order>
                     <show_in_default>1</show_in_default>
-                    <show_in_website>1</show_in_website>
-                    <show_in_store>1</show_in_store>
+                    <show_in_website>0</show_in_website>
+                    <show_in_store>0</show_in_store>
                     <fields>
                         <active translate="label">
                             <label>Enabled</label>
@@ -51,6 +51,14 @@
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
                         </debug>
+                        <imagequality_gd translate="label">
+                            <label>Image Quality in Percent (Magento Default: 90)</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </imagequality_gd>
                      </fields>
                 </general>
                 <programm translate="label">
@@ -58,8 +66,8 @@
                     <frontend_type>text</frontend_type>
                     <sort_order>10</sort_order>
                     <show_in_default>1</show_in_default>
-                    <show_in_website>1</show_in_website>
-                    <show_in_store>1</show_in_store>
+                    <show_in_website>0</show_in_website>
+                    <show_in_store>0</show_in_store>
                     <fields>
                         <webp translate="label">
                             <label>webp Enabled</label>
@@ -123,6 +131,63 @@
                         </pngquant>
                      </fields>
                 </programm>
+                <webp translate="label">
+                    <label>webp Settings</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>20</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>0</show_in_website>
+                    <show_in_store>0</show_in_store>
+                    <fields>
+                        <remove_files_on_size translate="label">
+                            <label>remove webp if size is bigger</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>05</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <comment>When the file size of webp is bigger, this setting will delete the webp file</comment>
+                        </remove_files_on_size>
+                        <imagequality translate="label">
+                            <label>Image Quality</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <comment>Magento Default: 90</comment>
+                        </imagequality>
+                        <generate_webp_image translate="label">
+                            <label>Generate Webp with CMS Filter</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>15</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </generate_webp_image>
+                     </fields>
+                </webp>
+                <jpeg translate="label">
+                    <label>JPEG Settings</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>25</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>0</show_in_website>
+                    <show_in_store>0</show_in_store>
+                    <fields>
+                        <imagequality translate="label">
+                            <label>Image Quality</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>05</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <comment>Magento Default: 90</comment>
+                        </imagequality>
+                     </fields>
+                </jpeg>
             </groups>
         </imagequeue>
     </sections>

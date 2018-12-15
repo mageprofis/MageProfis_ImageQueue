@@ -2,7 +2,7 @@
 <config>
     <modules>
         <MageProfis_ImageQueue>
-            <version>1.0.0.1</version>
+            <version>1.0.0.2</version>
         </MageProfis_ImageQueue>
     </modules>
     <global>
@@ -47,6 +47,15 @@
             </imagequeue_setup>
         </resources>
 
+        <cms>
+            <page>
+                <tempate_filter>imagequeue/cms_template_filter_page</tempate_filter>
+            </page>
+            <block>
+                <tempate_filter>imagequeue/cms_template_filter_block</tempate_filter>
+            </block>
+        </cms>
+
     </global>
 
     <crontab>
@@ -67,6 +76,14 @@
                     <model>imagequeue/cron::runPng</model>
                 </run>
             </imagequeue_images_png>
+            <imagequeue_images_webp>
+                <schedule>
+                    <cron_expr>*/5 * * * *</cron_expr>
+                </schedule>
+                <run>
+                    <model>imagequeue/cron::runWebp</model>
+                </run>
+            </imagequeue_images_webp>
         </jobs>
     </crontab>
 
@@ -91,4 +108,17 @@
             </resources>
         </acl>
     </adminhtml>
+    <default>
+        <imagequeue>
+            <general>
+                <imagequality_gd>90</imagequality_gd>
+            </general>
+            <webp>
+                <imagequality>90</imagequality>
+            </webp>
+            <jpeg>
+                <imagequality>90</imagequality>
+            </jpeg>
+        </imagequeue>
+    </default>
 </config>

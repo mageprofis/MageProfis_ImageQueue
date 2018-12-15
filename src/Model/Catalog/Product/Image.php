@@ -8,6 +8,12 @@ extends MageProfis_ImageQueue_Model_Catalog_Product_Image_Abstract
      */
     public function saveFile()
     {
+        // change image quality
+        $quality = (int) Mage::getStoreConfig('imagequeue/general/imagequality_gd', 0);
+        if ($quality > 50)
+        {
+            $this->_quality = $quality;
+        }
         parent::saveFile();
         Mage::helper('imagequeue')->addImageToCompress($this->getNewFile());
         return $this;

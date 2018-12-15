@@ -48,6 +48,11 @@ extends Mage_Core_Model_Abstract
         {
             $this->setData('filename_hash', hash('sha256', $this->getData('filename')));
         }
+        $webbp = $this->getData('webbp');
+        if (empty($webbp))
+        {
+            $this->setData('webbp', 0);
+        }
         return $this;
     }
 
@@ -56,7 +61,15 @@ extends Mage_Core_Model_Abstract
      */
     public function getFirstItem($suffix = 'jpg')
     {
-        return $this->getCollection()
+        $collection = $this->getCollection();
+        if ($suffix == 'webp')
+        {
+            $suffix = array(
+                'in' => array('png', 'jpg')
+            );
+            $collection->addFieldToFilter('webp', 0);
+        }
+        return $collection
                 ->addOrder('priority', 'DESC')
                 ->addOrder('compress_id', 'ASC')
                 ->addFieldToFilter('suffix', $suffix)

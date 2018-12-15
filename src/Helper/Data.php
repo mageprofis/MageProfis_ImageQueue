@@ -25,6 +25,7 @@ extends Mage_Core_Helper_Abstract
                 /* @var $compress MageProfis_ImageQueue_Model_Compress */
                 $compress->setFilename($path)
                         ->setPriority($prior)
+                        ->setWebp(0)
                         ->setSuffix($suffix)
                         ->save();
             } catch(Exception $e) {

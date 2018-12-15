@@ -9,11 +9,11 @@ extends Mage_Core_Model_Abstract
 
     public function runJpg()
     {
-        if (!Mage::getStoreConfigFlag('imagequeue/general/active', 0))
+        if (!$this->getConfigFlag('imagequeue/general/active'))
         {
             return;
         }
-        if (!Mage::getStoreConfigFlag('imagequeue/general/cron', 0))
+        if (!$this->getConfigFlag('imagequeue/general/cron'))
         {
             return;
         }
@@ -41,7 +41,7 @@ extends Mage_Core_Model_Abstract
             }
             $i++;
             
-            if (!Mage::getStoreConfigFlag('imagequeue/general/debug', 0))
+            if (!$this->getConfigFlag('imagequeue/general/debug'))
             {
                 ob_start();
             }
@@ -49,51 +49,50 @@ extends Mage_Core_Model_Abstract
             // jpegoptim
             $jpegoptimRunTwice = false;
             $jpegoptimExists = false;
-            
-            $webpFilename = null;
-            if (Mage::getStoreConfigFlag('imagequeue/programm/webp', 0) && $this->command_exist('cwebp'))
-            {
-                $webpFilename = dirname($item->getFilename()).DS. pathinfo($item->getFilename(), PATHINFO_FILENAME).'.webp';
-                $this->shell_exec('cwebp -q 90 '.$this->escapeshellarg($item->getFilename()).' -o '.$this->escapeshellarg($webpFilename).' 2>&1');
-            }
 
-            if (Mage::getStoreConfigFlag('imagequeue/programm/jpegoptim', 0) && $this->command_exist('jpegoptim'))
+            $this->_buildWebp($item);
+
+            if ($this->getConfigFlag('imagequeue/programm/jpegoptim') && $this->command_exist('jpegoptim'))
             {
                 $jpegoptimExists = true;
-                $this->shell_exec('jpegoptim -o --strip-all --max=90 --all-progressive '.$this->escapeshellarg($item->getFilename()).' 2>&1');
+                $quality = (int) $this->getConfig('imagequeue/imagequality/jpeg');
+                if ($quality < 50)
+                {
+                    $quality = 100;
+                }
+                $this->shell_exec('jpegoptim -o --strip-all --max='.$quality.' --all-progressive '.$this->escapeshellarg($item->getFilename()).' 2>&1');
             }
 
             // jpegtran, or mozjpeg
-            if (Mage::getStoreConfigFlag('imagequeue/programm/jpegtran', 0) && $this->command_exist('jpegtran'))
+            if ($this->getConfigFlag('imagequeue/programm/jpegtran') && $this->command_exist('jpegtran'))
             {
                 $jpegoptimRunTwice = true;
                 $this->shell_exec('jpegtran -copy none -optimize -progressive -outfile '.$this->escapeshellarg($item->getFilename()).' '.$this->escapeshellarg($item->getFilename()).' 2>&1');
             }
 
             // guetzli
-            if (Mage::getStoreConfigFlag('imagequeue/programm/guetzli', 0) && $this->command_exist('guetzli'))
+            if ($this->getConfigFlag('imagequeue/programm/guetzli') && $this->command_exist('guetzli'))
             {
                 $jpegoptimRunTwice = true;
-                $this->shell_exec('guetzli --quality 90 '.$this->escapeshellarg($item->getFilename()).' '.$this->escapeshellarg($item->getFilename()).' 2>&1');
+                $quality = (int) $this->getConfig('imagequeue/imagequality/jpeg');
+                if ($quality < 50)
+                {
+                    $quality = 100;
+                }
+                $this->shell_exec('guetzli --quality '.$quality.' '.$this->escapeshellarg($item->getFilename()).' '.$this->escapeshellarg($item->getFilename()).' 2>&1');
             }
 
             // jpegoptim, twice, yep twice
             if ($jpegoptimRunTwice && $jpegoptimExists)
             {
-                $this->shell_exec('jpegoptim -o --strip-all --max=90 --all-progressive '.$this->escapeshellarg($item->getFilename()).'');
+                $this->shell_exec('jpegoptim -o --strip-all --all-progressive '.$this->escapeshellarg($item->getFilename()).'');
             }
-            if ($webpFilename)
-            {
-                $webpFilenameSize = filesize($webpFilename);
-                $filenameSize = filesize($item->getFilename());
-                if ($webpFilenameSize >= $filenameSize)
-                {
-                    @unlink($webpFilename);
-                }
-            }
+
+            $this->_removeWebp($item);
+
             Mage::helper('imagequeue')->log('JPEG end compress: '.$item->getFilename());
 
-            if (!Mage::getStoreConfigFlag('imagequeue/general/debug', 0))
+            if (!$this->getConfigFlag('imagequeue/general/debug'))
             {
                 ob_end_clean();
             }
@@ -107,11 +106,11 @@ extends Mage_Core_Model_Abstract
      */
     public function runPng()
     {
-        if (!Mage::getStoreConfigFlag('imagequeue/general/active', 0))
+        if (!$this->getConfigFlag('imagequeue/general/active'))
         {
             return;
         }
-        if (!Mage::getStoreConfigFlag('imagequeue/general/cron', 0))
+        if (!$this->getConfigFlag('imagequeue/general/cron'))
         {
             return;
         }
@@ -139,45 +138,96 @@ extends Mage_Core_Model_Abstract
             }
             $i++;
             
-            if (!Mage::getStoreConfigFlag('imagequeue/general/debug', 0))
+            if (!$this->getConfigFlag('imagequeue/general/debug'))
             {
                 ob_start();
             }
 
-            $webpFilename = null;
-            if (Mage::getStoreConfigFlag('imagequeue/programm/webp', 0) && $this->command_exist('optipng'))
-            {
-                $webpFilename = dirname($item->getFilename()).DS. pathinfo($item->getFilename(), PATHINFO_FILENAME).'.webp';
-                $this->shell_exec('cwebp -q 90 '.$this->escapeshellarg($item->getFilename()).' -o '.$this->escapeshellarg($webpFilename).' 2>&1');
-            }
+            $this->_buildWebp($item);
 
             Mage::helper('imagequeue')->log('PNG start compress: '.$item->getFilename());
-            if (Mage::getStoreConfigFlag('imagequeue/programm/optipng', 0) && $this->command_exist('optipng'))
+            if ($this->getConfigFlag('imagequeue/programm/optipng') && $this->command_exist('optipng'))
             {
                 $this->shell_exec('optipng -o9 -strip all '.$this->escapeshellarg($item->getFilename()).' 2>&1');
             }
 
-            if (Mage::getStoreConfigFlag('imagequeue/programm/pngquant', 0) && $this->command_exist('pngquant'))
+            if ($this->getConfigFlag('imagequeue/programm/pngquant') && $this->command_exist('pngquant'))
             {
                 $this->shell_exec('pngquant --skip-if-larger --ext .png --force 256 '.$this->escapeshellarg($item->getFilename()).' 2>&1');
             }
             Mage::helper('imagequeue')->log('PNG end compress: '.$item->getFilename());
 
-            if ($webpFilename)
-            {
-                $webpFilenameSize = filesize($webpFilename);
-                $filenameSize = filesize($item->getFilename());
-                if ($webpFilenameSize >= $filenameSize)
-                {
-                    @unlink($webpFilename);
-                }
-            }
-            
-            if (!Mage::getStoreConfigFlag('imagequeue/general/debug', 0))
+            $this->_removeWebp($item);
+
+            if (!$this->getConfigFlag('imagequeue/general/debug'))
             {
                 ob_end_clean();
             }
             Mage::getModel('imagequeue/compress')->load($item->getId())->delete();
+        }
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function runWebp()
+    {
+        if (!$this->getConfigFlag('imagequeue/general/active'))
+        {
+            return;
+        }
+        if (!$this->getConfigFlag('imagequeue/general/cron'))
+        {
+            return;
+        }
+        $collection = Mage::getModel('cron/schedule')->getCollection()
+                        ->addFieldToFilter('status', Mage_Cron_Model_Schedule::STATUS_RUNNING)
+                        ->addFieldToFilter('job_code', 'imagequeue_images_webp');
+        if($collection->getSize() > 1)
+        {
+            return 'Process already running';
+        }
+        $i = 0;
+        while(true)
+        {
+            $item = Mage::getModel('imagequeue/compress')->getFirstItem('webp');
+            /* @var $item MageProfis_ImageQueue_Model_Compress */
+            // skip at range or if there is no item in queue
+            if ($i >= $this->_limit || (!$item || !$item->getId()))
+            {
+                break;
+            }
+            if (!file_exists($item->getFilename()))
+            {
+                $item->delete();
+                continue;
+            }
+            $i++;
+            
+            if (!$this->getConfigFlag('imagequeue/general/debug'))
+            {
+                ob_start();
+            }
+
+            Mage::helper('imagequeue')->log('WEBP start compress: '.$item->getFilename());
+
+            $this->_buildWebp($item);
+
+            Mage::helper('imagequeue')->log('PNG end compress: '.$item->getFilename());
+
+            $this->_removeWebp($item);
+
+            if (!$this->getConfigFlag('imagequeue/general/debug'))
+            {
+                ob_end_clean();
+            }
+            $item = Mage::getModel('imagequeue/compress')->load($item->getId());
+            if ($item && $item->getId())
+            {
+                $item->setData('webp', 1)
+                        ->save();
+            }
         }
     }
 
@@ -190,7 +240,7 @@ extends Mage_Core_Model_Abstract
     {
         $this->disconnectDatabases();
         $result = shell_exec($cmd);
-        if (Mage::getStoreConfigFlag('imagequeue/general/debug', 0))
+        if ($this->getConfigFlag('imagequeue/general/debug'))
         {
             echo date('r').' - '.trim($cmd)."\n";
             echo date('r').' - '.trim($result)."\n";
@@ -258,5 +308,69 @@ extends Mage_Core_Model_Abstract
                 $conn->closeConnection();
             }
         }
+    }
+
+    /**
+     * 
+     * @param MageProfis_ImageQueue_Model_Compress $item
+     * @return type
+     */
+    protected function _getWebpFilename(MageProfis_ImageQueue_Model_Compress $item)
+    {
+        return dirname($item->getFilename()).DS. pathinfo($item->getFilename(), PATHINFO_FILENAME).'.webp';
+    }
+
+    /**
+     * 
+     * @param MageProfis_ImageQueue_Model_Compress $item
+     * @return boolean
+     */
+    protected function _buildWebp(MageProfis_ImageQueue_Model_Compress $item)
+    {
+        if ($this->getConfigFlag('imagequeue/programm/webp') && $this->command_exist('cwebp'))
+        {
+            $webpFilename = $this->_getWebpFilename($item);
+            Mage::helper('imagequeue/webp')->buildWebp($item->getFilename(), $webpFilename);
+        }
+        return true;
+    }
+
+    /**
+     * 
+     * @param MageProfis_ImageQueue_Model_Compress $item
+     */
+    protected function _removeWebp(MageProfis_ImageQueue_Model_Compress $item)
+    {
+        if ($this->getConfigFlag('imagequeue/programm/webp') && $this->command_exist('cwebp')
+                && $this->getConfigFlag('imagequeue/webp/remove_files_on_size'))
+        {
+            $webpFilename = $this->_getWebpFilename($item);
+            $webpFilenameSize = filesize($webpFilename);
+            $filenameSize = filesize($item->getFilename());
+            if ($webpFilenameSize >= $filenameSize)
+            {
+                @unlink($webpFilename);
+            }
+        }
+    }
+
+    /**
+     * 
+     * @param string $path
+     * @return string
+     */
+    protected function getConfig($path)
+    {
+        return Mage::getStoreConfig($path, 0);
+    }
+
+    /**
+     * 
+     * @param string $path
+     * @return bool
+     */
+    protected function getConfigFlag($path)
+    {
+        return Mage::getStoreConfigFlag($path, 0);
     }
 }

@@ -5,6 +5,11 @@ extends Technooze_Timage_Helper_Data
 {
     public function resizer()
     {
+        $quality = (int) Mage::getStoreConfig('imagequeue/general/imagequality_gd', 0);
+        if ($quality > 50)
+        {
+            $this->quality = $quality;
+        }
         parent::resizer();
         Mage::helper('imagequeue')->addImageToCompress($this->cachedImage);
     }
