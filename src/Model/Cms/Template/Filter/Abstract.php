@@ -26,7 +26,7 @@ extends Mage_Cms_Model_Template_Filter
         if ($this->_generate_webp)
         {
             $path = rtrim(Mage::getBaseDir('media'), '/').'/'.$path;
-            if (!$this->_isImage($path))
+            if (!$this->_isImage($path) || !file_exists($path))
             {
                 return $url;
             }
