@@ -4,7 +4,7 @@ abstract class MageProfis_ImageQueue_Model_Cms_Template_Filter_Abstract
 extends Mage_Cms_Model_Template_Filter
 {    
     protected $_generate_webp = false;
-    
+
     public function __construct() {
         parent::__construct();
         if (Mage::getStoreConfigFlag('imagequeue/webp/generate_webp_image', 0))
@@ -13,6 +13,12 @@ extends Mage_Cms_Model_Template_Filter
         }
     }
 
+    /**
+     * Retrieve media file URL directive
+     *
+     * @param array $construction
+     * @return string
+     */
     public function mediaDirective($construction)
     {
         if (!Mage::helper('imagequeue')->canUseWebp())
@@ -38,7 +44,36 @@ extends Mage_Cms_Model_Template_Filter
         }
         return $this->getWebpImage($url);
     }
-    
+
+    /**
+     * Retrieve Skin URL directive
+     *
+     * @param array $construction
+     * @return string
+     */
+    public function skinDirective($construction)
+    {
+        $url = parent::skinDirective($construction);
+        if (!Mage::helper('imagequeue')->canUseWebp())
+        {
+            return $url;
+        }
+        
+        $path = parse_url($url, PHP_URL_PATH);
+        $path = rtrim(Mage::getBaseDir('base'), '/').'/'.$path;
+        $pathWebp = dirname($path).DS. pathinfo($path, PATHINFO_FILENAME).'.webp';
+        if (!$this->_isImage($path) || !file_exists($pathWebp))
+        {
+            return $url;
+        }
+        return $this->getWebpImage($url);
+    }
+
+    /**
+     * 
+     * @param string $url
+     * @return string
+     */
     public function getWebpImage($url)
     {
         if (Mage::helper('imagequeue')->canUseWebp())
@@ -56,8 +91,8 @@ extends Mage_Cms_Model_Template_Filter
 
     /**
      * 
-     * @param type $path
-     * @return type
+     * @param string $path
+     * @return bool
      */
     protected function _isImage($path)
     {
