@@ -11,7 +11,6 @@ extends Mage_Core_Helper_Abstract
      */
     public function buildWebp($source, $destination)
     {
-        var_dump($source, $destination);
         $quality = (int) Mage::getStoreConfig('imagequeue/webp/imagequality');
         if ($quality < 50)
         {
